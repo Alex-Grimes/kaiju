@@ -48,11 +48,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Post("/comment", s.commentHandler)
 
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:1323/swagger/doc.json")))
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
 
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:1323/swagger/doc.json")))
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
 
-	http.ListenAndServe(":1323", r)
+	http.ListenAndServe(":8080", r)
 	return r
 }
 
@@ -95,6 +95,14 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
+// websocket godoc
+// @Summary WebSocket Connection
+// @Description a endpoint for making websocket connections
+// @Accept json
+// @Tags WebSocket
+// @Produce json
+// @Success 200
+// @Router /websocket [get]
 func (s *Server) websocketHandler(w http.ResponseWriter, r *http.Request) {
 	socket, err := websocket.Accept(w, r, nil)
 	if err != nil {

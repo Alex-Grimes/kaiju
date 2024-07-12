@@ -42,6 +42,19 @@ paths:
       summary: Health Check
       tags:
       - Health
+  /websocket:
+    get:
+      consumes:
+      - application/json
+      description: a endpoint for making websocket connections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: WebSocket Connection
+      tags:
+      - WebSocket
 securityDefinitions:
   BasicAuth:
     type: basic

@@ -63,6 +63,26 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/websocket": {
+            "get": {
+                "description": "a endpoint for making websocket connections",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WebSocket"
+                ],
+                "summary": "WebSocket Connection",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
         }
     },
     "securityDefinitions": {
