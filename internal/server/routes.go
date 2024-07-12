@@ -2,14 +2,16 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-
-	"fmt"
 	"time"
+
+	_ "kaiju/cmd/api/docs"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"nhooyr.io/websocket"
 )
@@ -18,11 +20,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:1323/swagger/doc.json")))
+
+	http.ListenAndServe(":1323", r)
+
 	r.Get("/", s.HelloWorldHandler)
 
 	r.Get("/health", s.healthHandler)
 
 	r.Get("/websocket", s.websocketHandler)
+
+	r.Post("/comment", s.commentHandler)
 
 	return r
 }
@@ -39,6 +47,12 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
+func (s *Server) commentHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"message": "post called"}`))
+}
+
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(s.db.Health())
 	_, _ = w.Write(jsonResp)
@@ -46,7 +60,6 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) websocketHandler(w http.ResponseWriter, r *http.Request) {
 	socket, err := websocket.Accept(w, r, nil)
-
 	if err != nil {
 		log.Printf("could not open websocket: %v", err)
 		_, _ = w.Write([]byte("could not open websocket"))
