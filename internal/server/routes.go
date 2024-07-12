@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	_ "kaiju/cmd/api/docs"
+	_ "kaiju/internal/server/docs"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -16,13 +16,29 @@ import (
 	"nhooyr.io/websocket"
 )
 
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /
+
+// @securityDefinitions.basic  BasicAuth
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
+
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-
-	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:1323/swagger/doc.json")))
-
-	http.ListenAndServe(":1323", r)
 
 	r.Get("/", s.HelloWorldHandler)
 
@@ -32,9 +48,22 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Post("/comment", s.commentHandler)
 
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:1323/swagger/doc.json")))
+
+	r.Get("/swagger/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:1323/swagger/doc.json")))
+
+	http.ListenAndServe(":1323", r)
 	return r
 }
 
+// HelloWorldHandler godoc
+// @Summary Helloworld
+// @Description testing swaggo
+// @Accept  json
+// @Tags HelloWorld
+// @Produce  json
+// @Success 200
+// @Router / [get]
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
 	resp["message"] = "Hello World"
@@ -53,6 +82,14 @@ func (s *Server) commentHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(`{"message": "post called"}`))
 }
 
+// healthHandler godoc
+// @Summary Health Check
+// @Description simple healthHandler
+// @Accept  json
+// @Tags Health
+// @Produce  json
+// @Success 200
+// @Router /health [get]
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(s.db.Health())
 	_, _ = w.Write(jsonResp)
