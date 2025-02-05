@@ -42,6 +42,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Get("/", s.HelloWorldHandler)
 
+	r.Get("/user", s.user)
+
 	r.Get("/health", s.healthHandler)
 
 	r.Get("/websocket", s.websocketHandler)
